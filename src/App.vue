@@ -128,7 +128,7 @@ import ReconnectingWebSocket  from 'reconnecting-websocket';  // https://github.
 
 var host = window.location.hostname;
 if (host === "localhost") {
-  host = "192.168.0.49";
+  host = "192.168.0.14";
 }
 const ws_url = "ws://" + host + ":81";
 
@@ -148,7 +148,7 @@ export default {
   },
 
   data: () => ({
-    color: {r:0, g:0, b:0, hex:"000000"},
+    color: {r:0, g:0, b:0, hex:"000000", r2:0, g2:0, b2:0, hex2:"000000", r3:0, g3:0, b3:0, hex3:"000000"},
     brightness: 192,
     speed: 192,
     modes: [{ title: "OFF", id: "off" }, { title: "TV", id: "tv" }],
@@ -362,6 +362,14 @@ export default {
             that.color.g = res.color[1];
             that.color.b = res.color[2];
             that.color.hex = that.rgbToHex([that.color.r, that.color.g, that.color.b]);
+            that.color.r2 = res.color[3];
+            that.color.g2 = res.color[4];
+            that.color.b2 = res.color[5];
+            that.color.hex2 = that.rgbToHex([that.color.r2, that.color.g2, that.color.b2]);
+            that.color.r3 = res.color[6];
+            that.color.g3 = res.color[7];
+            that.color.b3 = res.color[8];
+            that.color.hex3 = that.rgbToHex([that.color.r3, that.color.g3, that.color.b3]);
           }
         } catch (e) {}
       };
@@ -392,9 +400,21 @@ export default {
       this.ws_send("%" + brightness);
     },
     set_color() {
-      this.ws_send(
-        "#" + this.rgbToHex([this.color.r, this.color.g, this.color.b])
-      );
+      if (this.color.num === 1) {
+        this.ws_send(
+          "#" + this.rgbToHex([this.color.r, this.color.g, this.color.b])
+        );
+      }
+      if (this.color.num === 2) {
+        this.ws_send(
+          "##" + this.rgbToHex([this.color.r2, this.color.g2, this.color.b2])
+        );
+      }
+      if (this.color.num === 3) {
+        this.ws_send(
+          "###" + this.rgbToHex([this.color.r3, this.color.g3, this.color.b3])
+        );
+      }
     },
 
     componentToHex(c) {
@@ -409,7 +429,25 @@ export default {
     },
 
     onColorSelected(color) {
-      this.color = color;
+      if (color.num === 2) {
+        this.color.num = color.num;
+        this.color.r2 = color.r;
+        this.color.g2 = color.g;
+        this.color.b2 = color.b;
+        this.color.hex2 = color.hex;
+      } else if (color.num === 3) {
+        this.color.num = color.num;
+        this.color.r3 = color.r;
+        this.color.g3 = color.g;
+        this.color.b3 = color.b;
+        this.color.hex3 = color.hex;
+      } else {
+        this.color.num = color.num;
+        this.color.r = color.r;
+        this.color.g = color.g;
+        this.color.b = color.b;
+        this.color.hex = color.hex;
+      }
       this.set_color();
     }
   },

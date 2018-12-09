@@ -2,10 +2,18 @@
     <v-container>
         <canvas ref="canvas" id="color_wheel_canvas" class="mx-auto" v-on:click="onSelectColor" v-on:touchmove="onSelectColor"></canvas>
 
-        <div id="color_wheel_legend" class="elevation-6 black--text" v-if="color.r >= 0" v-bind:style="{'background-color': '#' + color_hex}">
-          Color: #{{ color_hex }}<br/>
-          R: {{ color.r || "" }}, G: {{ color.g || "" }}, B: {{ color.b || "" }}
-        </div>
+            <div class="color_wheel_legend elevation-6 black--text" v-on:click="onSelectColNum(1)" v-if="color.r >= 0" v-bind:style="{'background-color': '#' + color.hex}">
+            Color 1: #{{ this.color.hex }}<br/>
+            <!--// R: {{ color.r || "" }}, G: {{ color.g || "" }}, B: {{ color.b || "" }} //-->
+            </div>
+            <div class="color_wheel_legend elevation-6 black--text" v-on:click="onSelectColNum(2)" v-if="color.r >= 0" v-bind:style="{'background-color': '#' + color.hex2}">
+            Color 2: #{{ this.color.hex2 }}<br/>
+            <!--// R: {{ color.r2 || "" }}, G: {{ color.g2 || "" }}, B: {{ color.b2 || "" }} //-->
+            </div>
+            <div class="color_wheel_legend elevation-6 black--text" v-on:click="onSelectColNum(3)" v-if="color.r >= 0" v-bind:style="{'background-color': '#' + color.hex3}">
+            Color 3: #{{ this.color.hex3 }}<br/>
+            <!--// R: {{ color.r3 || "" }}, G: {{ color.g3 || "" }}, B: {{ color.b3 || "" }} //-->
+            </div>
     </v-container>
 </template>
 
@@ -82,6 +90,7 @@ export default {
       var color = this.context.getImageData(pos.x, pos.y, 1, 1).data;
       var hex_color = this.rgbToHex(color);
       var result = {
+        num: this.color_num,
         hex: hex_color,
         r: color[0],
         g: color[1],
@@ -89,6 +98,11 @@ export default {
         a: color[3]
       };
       this.$emit("selected", result);
+    },
+
+    onSelectColNum(colnum) {
+      this.color_num = colnum;
+      console.log("selected color:" + this.color_num);
     },
 
     redrawColorPicker() {
@@ -266,8 +280,12 @@ export default {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     -moz-user-select: none;
   }
-  #color_wheel_legend {
+  .color_wheel_legend {
+    width: 30%;
+    float:left;
+    cursor: pointer;
     margin-top: 2rem;
+    margin-left: 0.5rem;
     padding: 0.8rem;
     text-align: center;
   }
